@@ -16,8 +16,17 @@ def order_queryset_by(queryset, order):
 
 
 @register.filter
-def attrsum(container, attr_name):
-    return sum(getattr(e, attr_name) for e in container)
+def attrsum_out(container, attr_name):
+    return sum(
+        getattr(e, attr_name) for e in container if getattr(e, attr_name) < 0
+    )
+
+
+@register.filter
+def attrsum_in(container, attr_name):
+    return sum(
+        getattr(e, attr_name) for e in container if getattr(e, attr_name) > 0
+    )
 
 
 @register.filter

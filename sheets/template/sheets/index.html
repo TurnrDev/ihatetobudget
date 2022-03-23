@@ -1,11 +1,55 @@
 {% extends 'sheets/common/base.html' %}
 
+{% load mathfilters %}
 {% load ihatetobudget_extras %}
 
 {% block content %}
   {% include 'sheets/macros/page_header_beginning.html' with title=title %}
     {% include 'sheets/macros/new_expense_button.html' %}
   {% include 'sheets/macros/page_header_end.html' %}
+
+  <div class="row mb-4">
+    <div class="col-lg-6">
+      <div class="card text-white bg-primary mb-2">
+        <div class="card-body">
+          <div class="media">
+            <div class="media-body">
+              <h6 class="mt-0 text-uppercase">
+                Monthly net average
+                <i class="fa fa-question-circle-o" data-toggle="tooltip" title="Only completed months are included"></i>
+              </h6>
+
+              <span class="h4 fx-fadein">{{ monthly_average_income|sub:monthly_average_spend|currency }}</span>
+            </div>
+            <span class="fa-stack fa-lg ml-3" style="font-size: 2rem;">
+              <i class="fa fa-circle fa-stack-2x fa-inverse"></i>
+              <i class="fa fa-calendar fa-stack-1x" style="color: var(--blue);"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card text-white bg-success mb-2">
+        <div class="card-body">
+          <div class="media">
+            <div class="media-body">
+              <h6 class="mt-0 text-uppercase">Monthly average usage</h6>
+              {% if monthly_average_income %}
+                <span class="h4 fx-fadein">{{ monthly_average_spend|div:monthly_average_income|mul:100|floatformat:2 }}%</span>
+              {% else %}
+                <span class="h4 fx-fadein">∞%</span>
+              {% endif %}
+            </div>
+            <span class="fa-stack fa-lg ml-3" style="font-size: 2rem;">
+              <i class="fa fa-circle fa-stack-2x fa-inverse"></i>
+              <i class="fa fa-percent fa-stack-1x" style="color: var(--green);"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row mb-4">
     <div class="col-lg-6">
@@ -35,6 +79,45 @@
             <div class="media-body">
               <h6 class="mt-0 text-uppercase">Median spend</h6>
               <span class="h4 fx-fadein">{{ median_spend|currency }}</span>
+            </div>
+            <span class="fa-stack fa-lg ml-3" style="font-size: 2rem;">
+              <i class="fa fa-circle fa-stack-2x fa-inverse"></i>
+              <i class="fa fa-money fa-stack-1x" style="color: var(--green);"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-lg-6">
+      <div class="card text-white bg-primary mb-2">
+        <div class="card-body">
+          <div class="media">
+            <div class="media-body">
+              <h6 class="mt-0 text-uppercase">
+                Monthly average income
+                <i class="fa fa-question-circle-o" data-toggle="tooltip" title="Only completed months are included"></i>
+              </h6>
+
+              <span class="h4 fx-fadein">{{ monthly_average_income|currency }}</span>
+            </div>
+            <span class="fa-stack fa-lg ml-3" style="font-size: 2rem;">
+              <i class="fa fa-circle fa-stack-2x fa-inverse"></i>
+              <i class="fa fa-calendar fa-stack-1x" style="color: var(--blue);"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card text-white bg-success mb-2">
+        <div class="card-body">
+          <div class="media">
+            <div class="media-body">
+              <h6 class="mt-0 text-uppercase">Median income</h6>
+              <span class="h4 fx-fadein">{{ median_income|currency }}</span>
             </div>
             <span class="fa-stack fa-lg ml-3" style="font-size: 2rem;">
               <i class="fa fa-circle fa-stack-2x fa-inverse"></i>

@@ -31,7 +31,6 @@ class Expense(models.Model):
     amount = models.DecimalField(
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal("0.01"))],
     )
     repeat_next_month = models.BooleanField(
         default=False,
@@ -41,6 +40,12 @@ class Expense(models.Model):
             " start of next month. This is particularly useful for monthly"
             " subscriptions."
         ),
+    )
+    import_reference = models.CharField(
+        max_length=256,
+        blank=True,
+        null=True,
+        unique=True,
     )
 
     def __str__(self):

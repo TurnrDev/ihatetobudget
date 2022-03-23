@@ -21,12 +21,12 @@ class ExtrasTestCase(TestCase):
     def test_order_queryset_by(self):
         pass
 
-    def test_attrsum(self):
+    def test_attrsum_out(self):
         class SomeObject:
             bar = 2
 
         self.assertRenderedCorrectly(
-            "{{ foo|attrsum:'bar' }}",
+            "{{ foo|attrsum_out:'bar' }}",
             dict(foo=[SomeObject() for _ in range(10)]),
             "20",
         )

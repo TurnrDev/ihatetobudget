@@ -62,7 +62,27 @@ def index(request):
                 x
                 if (
                     x := Expense.objects.filter(
-                        date__lt=first_day_of_current_month
+                        date__lt=first_day_of_current_month, amount__lt=0
+                    )
+                    .annotate(period=TruncMonth("date"))
+                    .values("period")
+                    .annotate(amount__sum=Sum("amount"))
+                    .aggregate(Avg("amount__sum"))["amount__sum__avg"]
+                )
+                else 0
+            )
+            * -1,
+            median_spend=(
+                statistics.median(e.amount for e in x)
+                if (x := Expense.objects.filter(amount__lt=0))
+                else 0
+            )
+            * -1,
+            monthly_average_income=(
+                x
+                if (
+                    x := Expense.objects.filter(
+                        date__lt=first_day_of_current_month, amount__gt=0
                     )
                     .annotate(period=TruncMonth("date"))
                     .values("period")
@@ -71,9 +91,9 @@ def index(request):
                 )
                 else 0
             ),
-            median_spend=(
+            median_income=(
                 statistics.median(e.amount for e in x)
-                if (x := Expense.objects.all())
+                if (x := Expense.objects.filter(amount__gt=0))
                 else 0
             ),
             monthly_insights_dict=monthly_insights,
@@ -88,7 +108,7 @@ def index(request):
 
 class SheetView(LoginRequiredMixin, MonthArchiveView):
     template_name = "sheets/sheet.html"
-    queryset = Expense.objects.all()
+    queryset = Expense.objects.exclude(amount=0)
     date_field = "date"
     allow_future = True
 

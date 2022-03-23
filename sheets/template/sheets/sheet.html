@@ -6,7 +6,8 @@
 {% block title %}{{ month|date:"F Y" }}{% endblock %}
 
 {% block content %}
-  {% setvar object_list|attrsum:'amount' as total_amount %}
+  {% setvar object_list|attrsum_out:'amount' as total_outgoings %}
+  {% setvar object_list|attrsum_in:'amount' as total_income %}
 
   {% setvar month|date:"F Y"|italic_if_future:month as title %}
   {% if days_left %}
@@ -28,7 +29,7 @@
       <span class="text-muted"><i class="fa fa-hand-o-left" data-toggle="tooltip" title="No previous month"></i></span>
     {% endif %}
 
-    <p class="h3 text-center fx-fadein mb-0">{{ total_amount|currency }}</p>
+    <p class="h3 text-center fx-fadein mb-0">{{ total_outgoings|currency }}</p>
 
     {% if next_month %}
       {% url 'sheets:sheet' next_month.year next_month.month as url %}
@@ -42,8 +43,14 @@
 
   <div class="progress mt-2 mb-4 rounded-pill" style="height: .5rem">
     {% for category in category_list %}
-      {% setvar category.list|attrsum:'amount'|div:total_amount|mul:100 as bar_length %}
-      <div class="progress-bar {% if not forloop.first %}ml-1{%endif%}" role="progressbar" style="width: {{ bar_length }}%; background-color: {{ category.grouper.color|default:"#ddd" }};" aria-valuenow="{{ bar_length }}" aria-valuemin="0" aria-valuemax="100"></div>
+      {% setvar category.list|attrsum_out:'amount'|div:total_outgoings|mul:50 as bar_length_out %}
+      <div class="progress-bar {% if not forloop.first %}ml-1{%endif%}" role="progressbar" style="width: {{ bar_length_out }}%; background-color: {{ category.grouper.color|default:"#ddd" }};" aria-valuenow="{{ bar_length_out }}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-placement="top" title="{{category.grouper.name}} {{category.list|attrsum_out:'amount'|currency}}"></div>
+    {% endfor %}
+  {% comment %} </div> {% endcomment %}
+  {% comment %} <div class="progress mt-2 mb-4 rounded-pill" style="height: .5rem"> {% endcomment %}
+    {% for category in category_list %}
+      {% setvar category.list|attrsum_in:'amount'|div:total_income|mul:50 as bar_length_in %}
+      <div class="progress-bar {% if not forloop.first %}ml-1{%endif%}" role="progressbar" style="width: {{ bar_length_in }}%; background-color: {{ category.grouper.color|default:"#ddd" }};" aria-valuenow="{{ bar_length_in }}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-placement="top" title="{{category.grouper.name}} {{category.list|attrsum_in:'amount'|currency}}"></div>
     {% endfor %}
   </div>
 
@@ -62,7 +69,7 @@
               </span>
             {% endif %}
 
-            <span class="ml-3">{{ category.list|attrsum:'amount'|currency }}</span>
+            <span class="ml-3">{{ category.list|attrsum_out:'amount'|currency }}</span>
           </div>
           <ul class="list-group list-group-flush">
             {% for expense in category.list|dictsort:'date' %}
