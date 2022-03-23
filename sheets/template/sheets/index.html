@@ -116,8 +116,12 @@
         <div class="card-body">
           <div class="media">
             <div class="media-body">
-              <h6 class="mt-0 text-uppercase">Median income</h6>
-              <span class="h4 fx-fadein">{{ median_income|currency }}</span>
+              <h6 class="mt-0 text-uppercase">Worst category</h6>
+              {% if worst_category.amount %}
+                <span class="h4 fx-fadein">{{ worst_category.name|upper }} {{ worst_category.amount|currency }}</span>
+              {% else %}
+                <span class="h4 fx-fadein">None</span>
+              {% endif %}
             </div>
             <span class="fa-stack fa-lg ml-3" style="font-size: 2rem;">
               <i class="fa fa-circle fa-stack-2x fa-inverse"></i>

@@ -96,6 +96,12 @@ def index(request):
                 if (x := Expense.objects.filter(amount__gt=0))
                 else 0
             ),
+            worst_category=(
+                Category.objects.annotate(amount=Sum("expense__amount"))
+                .exclude(amount__isnull=True)
+                .order_by("amount")
+                .first()
+            ),
             monthly_insights_dict=monthly_insights,
             # Currency related
             currency_group_separator=settings.CURRENCY_GROUP_SEPARATOR,

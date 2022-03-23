@@ -27,6 +27,7 @@ class Expense(models.Model):
     )
 
     date = models.DateField(default=date.today)
+    time = models.TimeField(null=True, blank=True)
     description = models.CharField(max_length=200)
     amount = models.DecimalField(
         max_digits=8,
@@ -56,3 +57,6 @@ class Expense(models.Model):
             "sheets:sheet",
             kwargs={"year": self.date.year, "month": self.date.month},
         )
+
+    class Meta:
+        ordering = ["date", "time"]
